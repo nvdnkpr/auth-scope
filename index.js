@@ -4,46 +4,62 @@ var Permission = require('auth-permission');
 module.exports = Scope;
 
 /**
- * Create a new scope with any number of roles or permissions as arguments.
+ * Create a new scope from `requested` names
+ * and `available` roles and/or permissions.
  *
  * @example
  *
- *     // Specify any number of roles or permissions
- *     var scope = new Scope(roleA, permission, roleB, roleC);
+ *     var Permission = require('auth-permission')
+ *       , Role = require('auth-role')
+ *       , Scope = require('auth-scope');
  *
- *     // Pass as array instead
- *     var scope = new Scope([roleA, roleB]);
+ *     // Specify any number of roles or permissions
+ *     var available = [
+ *       Role('api')
+ *         .allow(Permission('read profile'))
+ *         .allow(Permission('read post')),
+ *       Permission('create account'),
+ *       Permission('update billing')
+ *     ];
+ *
+ *     // Create scope from available roles and/or permissions
+ *     var scope = new Scope(['api', 'create account'], available);
+ *
+ *     // Get scope permissions
+ *     var permissions = scope.permissions();
+ *
+ *     JSON.stringify(permissions);
+ *     // => ['read profile', 'read post', 'create account']
  *
  * @api public
  */
-function Scope() {
+function Scope(requested, available) {
   if (!(this instanceof Scope)) {
-    var scope = Object.create(Scope.prototype);
-    Scope.apply(scope, arguments);
-    return scope;
-  }
-
-  var args = arguments[0];
-  if (arguments.length > 1) {
-    args = Array.prototype.slice.call(arguments);
+    return new Scope(requested, available);
   }
 
   var permissions = [];
 
-  for (var len = args.length; i<len; i++) {
-    if (args[i] instanceof Role) {
-      this.permissions = this.permissions.concat(args[i].permissions);
+  for (var len = available.length; i<len; i++) {
+    if (available[i] instanceof Role) {
+      var role = available[i];
+      if (~requested.indexOf(role.name)) {
+        this.permissions = this.permissions.concat(role.permissions);
+      }
     }
-    if (args[i] instanceof Permission) {
-      this.permissions.push(args[i]);
+    if (available[i] instanceof Permission) {
+      var permission = available[i];
+      if (~requested.indexOf(permission.name())) {
+        this.permissions.push(permission);
+      }
     }
   };
 
-  Object.defineProperty(this, 'permissions', {
+  Object.defineProperty(this, 'scope', {
     value: permissions
   });
 };
 
-Scope.prototype.toJSON = function() {
-  return this.permissions;
+Scope.prototype.permissions = Scope.prototype.toJSON = function() {
+  return this.scope;
 };

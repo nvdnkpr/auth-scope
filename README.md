@@ -1,7 +1,12 @@
 # auth-scope
 
-Manage collections of [roles](https://github.com/alexmingoia/auth-role) and
+Select permissions from subset of available
+[roles](https://github.com/alexmingoia/auth-role) and/or
 [permissions](https://github.com/alexmingoia/auth-permission).
+
+Originally made for use with
+[oauth2orize](https://github.com/jaredhanson/oauth2orize/) and the `scope`
+parameter, but could be adapted to different scenarios.
 
 ## Installation
 
@@ -20,21 +25,38 @@ component install alexmingoia/auth-scope
 ## Example
 
 ```javascript
-var Scope = require('auth-scope');
+var Permission = require('auth-permission')
+  , Role = require('auth-role')
+  , Scope = require('auth-scope');
 
-module.exports.availableScopes = {
-  'basic': new Scope(roleA, permission, roleB, roleC)
-};
+// Specify any number of roles or permissions
+var available = [
+  Role('api')
+    .allow(Permission('read profile'))
+    .allow(Permission('read post')),
+  Permission('create account'),
+  Permission('update billing')
+];
+
+// Create scope from available roles and/or permissions
+var scope = new Scope(['api', 'create account'], available);
+
+// Get scope permissions
+var permissions = scope.permissions();
+
+JSON.stringify(permissions);
+// => ['read profile', 'read post', 'create account']
 ```
 
 ## API
 
-### Scope(roles)
+### Scope(requested, available)
 
-Create a new Scope with given roles and/or permissions.
+Create a new scope from `requested` names and `available` roles and/or 
+permissions.
 
-### scope.permissions
+### scope.permissions()
 
-Array of permissions.
+Returns array of permissions.
 
 ## MIT Licensed
