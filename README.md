@@ -3,8 +3,18 @@
 Manage collections of [roles](https://github.com/alexmingoia/auth-role) and
 [permissions](https://github.com/alexmingoia/auth-permission).
 
+## Installation
+
+### Node
+
 ```sh
 npm install auth-scope
+```
+
+### Browser
+
+```sh
+component install alexmingoia/auth-scope
 ```
 
 ## Example
