@@ -40,7 +40,7 @@ function Scope(requested, available) {
 
   var permissions = [];
 
-  for (var len = available.length; i<len; i++) {
+  for (var len = available.length, i=0; i<len; i++) {
     if (available[i] instanceof Role) {
       var role = available[i];
       if (~requested.indexOf(role.name)) {
