@@ -1,0 +1,16 @@
+{
+  "name": "auth-scope",
+  "description": "Manage collections of roles and permissions.",
+  "repo": "alexmingoia/auth-scope",
+  "author": "Alex Mingoia <talk@alexmingoia.com>",
+  "keywords": ["acl", "roles", "permissions"],
+  "version": "1.0.0",
+  "dependencies": {
+    "alexmingoia/auth-role": "*",
+    "alexmingoia/auth-permission": "*"
+  },
+  "scripts": [
+    "index.js"
+  ],
+  "license": "MIT"
+}
