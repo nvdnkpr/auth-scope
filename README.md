@@ -1,6 +1,7 @@
-# scope
+# auth-scope
 
-Manage collections of [roles] and [permissions].
+Manage collections of [roles](https://github.com/alexmingoia/auth-role) and
+[permissions](https://github.com/alexmingoia/auth-permission).
 
 ```sh
 npm install auth-scope
@@ -18,7 +19,9 @@ module.exports.availableScopes = {
 
 ## API
 
-### Scope(roles|permissions)
+### Scope(roles)
+
+Create a new Scope with given roles and/or permissions.
 
 ### scope.permissions
 
