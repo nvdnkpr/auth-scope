@@ -1,6 +1,6 @@
 # auth-scope
 
-Select permissions from subset of available
+Create a scope from collection of
 [roles](https://github.com/alexmingoia/auth-role) and/or
 [permissions](https://github.com/alexmingoia/auth-permission).
 
@@ -30,16 +30,16 @@ var Permission = require('auth-permission')
   , Scope = require('auth-scope');
 
 // Specify any number of roles or permissions
-var available = [
+var roles = new Scope([
   Role('api')
     .allow(Permission('read profile'))
     .allow(Permission('read post')),
   Permission('create account'),
   Permission('update billing')
-];
+]);
 
 // Create scope from available roles and/or permissions
-var scope = new Scope(['api', 'create account'], available);
+var scope = new Scope(roles.find(['api', 'create account']));
 
 // Get scope permissions
 var permissions = scope.permissions();
@@ -50,10 +50,17 @@ JSON.stringify(permissions);
 
 ## API
 
-### Scope(requested, available)
+### new Scope(collection)
 
-Create a new scope from `requested` names and `available` roles and/or 
-permissions.
+Create a new scope from collection of permissions and roles.
+
+### scope.find(names)
+
+Find permissions or roles in the scope by name.
+
+### scope.roles()
+
+Returns array of roles.
 
 ### scope.permissions()
 

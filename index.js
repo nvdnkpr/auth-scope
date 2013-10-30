@@ -4,62 +4,74 @@ var Permission = require('auth-permission');
 module.exports = Scope;
 
 /**
- * Create a new scope from `requested` names
- * and `available` roles and/or permissions.
+ * Create a new scope from given permission and roles.
  *
- * @example
- *
- *     var Permission = require('auth-permission')
- *       , Role = require('auth-role')
- *       , Scope = require('auth-scope');
- *
- *     // Specify any number of roles or permissions
- *     var available = [
- *       Role('api')
- *         .allow(Permission('read profile'))
- *         .allow(Permission('read post')),
- *       Permission('create account'),
- *       Permission('update billing')
- *     ];
- *
- *     // Create scope from available roles and/or permissions
- *     var scope = new Scope(['api', 'create account'], available);
- *
- *     // Get scope permissions
- *     var permissions = scope.permissions();
- *
- *     JSON.stringify(permissions);
- *     // => ['read profile', 'read post', 'create account']
- *
+ * @param Array collection Roles and/or permissions.
  * @api public
  */
-function Scope(requested, available) {
+function Scope(collection) {
   if (!(this instanceof Scope)) {
-    return new Scope(requested, available);
+    return new Scope(collection);
   }
 
-  var permissions = [];
-
-  for (var len = available.length, i=0; i<len; i++) {
-    if (available[i] instanceof Role) {
-      var role = available[i];
-      if (~requested.indexOf(role.name)) {
-        this.permissions = this.permissions.concat(role.permissions);
-      }
-    }
-    if (available[i] instanceof Permission) {
-      var permission = available[i];
-      if (~requested.indexOf(permission.name())) {
-        this.permissions.push(permission);
-      }
-    }
-  };
-
-  Object.defineProperty(this, 'scope', {
-    value: permissions
-  });
+  this.collection = collection;
 };
 
-Scope.prototype.permissions = Scope.prototype.toJSON = function() {
-  return this.scope;
+/**
+ * Get scope permissions, including those in scope roles.
+ */
+Scope.prototype.permissions = function() {
+  var permissions = [];
+  // Find roles and add their permissions
+  for (var len = this.collection.length, i=0; i<len; i++) {
+    if (this.collection[i] instanceof Role) {
+      permissions = permissions.concat(
+        this.collection[i].permissions()
+      );
+    }
+  }
+  // find permissions
+  for (var len = this.collection.length, i=0; i<len; i++) {
+    if (this.collection[i] instanceof Permission) {
+      permissions.push(this.collection[i]);
+    }
+  }
+  return permissions;
+};
+
+/**
+ * Get scope roles.
+ */
+Scope.prototype.roles = function() {
+  var roles = [];
+  for (var len = this.collection.length, i=0; i<len; i++) {
+    if (this.collection[i] instanceof Role) {
+      roles.push(this.collection[i]);
+    }
+  }
+  return roles;
+};
+
+/**
+ * Find permissions or roles in scope by name.
+ */
+Scope.prototype.find = function(names) {
+  var found = [];
+  for (var len = this.collection.length, i=0; i<len; i++) {
+      if (~names.indexOf(this.collection[i].name())) {
+        found.push(this.collection[i]);
+      }
+  };
+  return found;
+};
+
+/**
+ * Returns role or permission names as json.
+ */
+Scope.prototype.toJSON = function() {
+  var names = [];
+  for (var len = this.collection.length, i=0; i<len; i++) {
+    names.push(this.collection[i].name());
+  }
+  return names;
 };
