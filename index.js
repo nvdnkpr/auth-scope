@@ -66,12 +66,28 @@ Scope.prototype.find = function(names) {
 };
 
 /**
+ * Check whether scope has given role or permission.
+ */
+Scope.prototype.has = function(name) {
+  if (name instanceof Role || name instanceof Permission) {
+    name = name.name();
+  }
+  var collection = this.roles().concat(this.permissions());
+  for (var len = collection.length, i=0; i<len; i++) {
+    if (collection[i].name() == name) return true;
+  }
+  return false;
+};
+
+/**
  * Returns role or permission names as json.
  */
-Scope.prototype.toJSON = function() {
+Scope.prototype.names = function() {
   var names = [];
   for (var len = this.collection.length, i=0; i<len; i++) {
     names.push(this.collection[i].name());
   }
   return names;
 };
+
+Scope.prototype.toJSON = Scope.prototype.names;
