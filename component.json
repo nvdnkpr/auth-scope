@@ -10,7 +10,7 @@
     "alexmingoia/auth-permission": "*"
   },
   "scripts": [
-    "index.js"
+    "lib/scope.js"
   ],
   "license": "MIT"
 }

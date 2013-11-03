@@ -7,10 +7,11 @@
     "type": "git",
     "url": "https://github.com/alexmingoia/auth-scope.git"
   },
+  "main": "./lib/scope.js",
   "dependencies": {
     "auth-role": "*",
     "auth-permission": "*"
   },
-  "keywords": ["acl", "roles", "permissions"],
+  "keywords": ["acl", "roles", "permissions", "scope", "oauth"],
   "license": "MIT"
 }
